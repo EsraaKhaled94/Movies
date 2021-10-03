@@ -9,7 +9,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
 abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
-    private var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
 
     val viewModel: T by lazy {
         ViewModelProvider(this).get(getViewModelClass())
@@ -28,6 +27,9 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
     abstract fun getViewModelClass(): Class<T>
     abstract fun handleLoading(b: Boolean)
 
+    private fun bindLoadingObserver() = viewModel.getLoadingObservable().observe(this) {
+        handleLoading(it)
+    }
     private fun bindErrorObserver() =
         viewModel.getErrorObservable().observe(this) {
             if (it != null) {
@@ -54,27 +56,5 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity() {
 
     private fun dismissDialogCallback() {
         viewModel.addErrorValue(null)
-    }
-
-    private fun bindLoadingObserver() = viewModel.getLoadingObservable().observe(this) {
-        handleLoading(it)
-    }
-
-    protected open fun addDisposable(disposable: Disposable?) {
-        if (disposable == null || mCompositeDisposable == null) {
-            throw IllegalStateException(" Disposable must be initialized")
-        }
-        mCompositeDisposable?.add(disposable!!)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposeDisposable()
-    }
-
-    private fun disposeDisposable() {
-        if (mCompositeDisposable != null) {
-            mCompositeDisposable!!.dispose()
-        }
     }
 }

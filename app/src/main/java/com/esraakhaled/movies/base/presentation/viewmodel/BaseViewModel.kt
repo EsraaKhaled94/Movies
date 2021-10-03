@@ -5,10 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CoroutineExceptionHandler
 
 open class BaseViewModel : ViewModel() {
-    private val mCompositeDisposable: CompositeDisposable = CompositeDisposable()
-
     private val loadingObservable = MutableLiveData(false)
     fun getLoadingObservable() = loadingObservable as LiveData<Boolean>
     fun addLoadingValue(value: Boolean) {
@@ -25,12 +24,7 @@ open class BaseViewModel : ViewModel() {
         errorObservable.postValue(value)
     }
 
-    fun addDisposable(disposable: Disposable) {
-        mCompositeDisposable.add(disposable)
-    }
-
-    override fun onCleared() {
-        mCompositeDisposable.dispose()
-        super.onCleared()
+    val handler = CoroutineExceptionHandler { _, throwable ->
+        addErrorValue(throwable)
     }
 }

@@ -1,9 +1,12 @@
 package com.esraakhaled.movies.moviesListing.data.model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Movie {
+
+class Movie() : Parcelable {
     fun getPosterFullPath(): String = "https://image.tmdb.org/t/p/w185$posterPath"
 
     @SerializedName("adult")
@@ -61,4 +64,50 @@ class Movie {
     @SerializedName("vote_count")
     @Expose
     var voteCount = 0
+
+    constructor(parcel: Parcel) : this() {
+        isAdult = parcel.readByte() != 0.toByte()
+        backdropPath = parcel.readString()
+        id = parcel.readInt()
+        originalLanguage = parcel.readString()
+        originalTitle = parcel.readString()
+        overview = parcel.readString()
+        popularity = parcel.readDouble()
+        posterPath = parcel.readString()
+        releaseDate = parcel.readString()
+        title = parcel.readString()
+        isVideo = parcel.readByte() != 0.toByte()
+        voteAverage = parcel.readDouble()
+        voteCount = parcel.readInt()
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeByte(if (isAdult) 1 else 0)
+        parcel.writeString(backdropPath)
+        parcel.writeInt(id)
+        parcel.writeString(originalLanguage)
+        parcel.writeString(originalTitle)
+        parcel.writeString(overview)
+        parcel.writeDouble(popularity)
+        parcel.writeString(posterPath)
+        parcel.writeString(releaseDate)
+        parcel.writeString(title)
+        parcel.writeByte(if (isVideo) 1 else 0)
+        parcel.writeDouble(voteAverage)
+        parcel.writeInt(voteCount)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Movie> {
+        override fun createFromParcel(parcel: Parcel): Movie {
+            return Movie(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Movie?> {
+            return arrayOfNulls(size)
+        }
+    }
 }

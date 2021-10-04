@@ -7,9 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.esraakhaled.movies.R
 import com.esraakhaled.movies.moviesListing.data.model.Movie
 import com.esraakhaled.movies.moviesListing.presentation.utils.ImageLoadingUtils
+import com.esraakhaled.movies.moviesListing.presentation.utils.OnMovieClickListener
 import kotlinx.android.synthetic.main.item_movie.view.*
 
-class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
+class MoviesAdapter(val listener: OnMovieClickListener) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
     private var movies: ArrayList<Movie> = ArrayList()
 
     inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -17,6 +18,7 @@ class MoviesAdapter : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
             itemView.movieName.text = movie.originalTitle
             itemView.movieOverview.text = movie.overview
             ImageLoadingUtils.loadImage(itemView.movieImage, movie.getPosterFullPath())
+            itemView.setOnClickListener { listener.onMovieClicked(movie) }
         }
 
     }

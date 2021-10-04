@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.esraakhaled.movies.R
 import com.esraakhaled.movies.base.presentation.view.BaseActivity
+import com.esraakhaled.movies.moviesListing.data.model.Movie
 import com.esraakhaled.movies.moviesListing.presentation.adapter.MoviesAdapter
+import com.esraakhaled.movies.moviesListing.presentation.utils.OnMovieClickListener
 import com.esraakhaled.movies.moviesListing.presentation.viewmodel.ListMoviesViewModel
 import kotlinx.android.synthetic.main.activity_list_movies.*
 
@@ -16,6 +18,13 @@ class ListMoviesActivity : BaseActivity<ListMoviesViewModel>() {
     private var pastVisibleItems: Int = 0
     private var visibleItemCount: Int = 0
     private var totalItemCount: Int = 0
+
+    private val listener: OnMovieClickListener = object : OnMovieClickListener {
+        override fun onMovieClicked(movie: Movie) {
+            startActivity(MovieDetailsDialog.getStartIntent(this@ListMoviesActivity, movie))
+        }
+
+    }
 
     override fun initView() {
         setupRecyclerView()
@@ -30,7 +39,7 @@ class ListMoviesActivity : BaseActivity<ListMoviesViewModel>() {
     }
 
     private fun setupRecyclerView() {
-        adapter = MoviesAdapter()
+        adapter = MoviesAdapter(listener)
         val layoutManager = LinearLayoutManager(this)
         moviesList.layoutManager = layoutManager
         moviesList.adapter = adapter
